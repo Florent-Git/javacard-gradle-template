@@ -1,0 +1,56 @@
+buildscript {
+    repositories {
+        jcenter()
+        mavenCentral()
+
+        // Repository with Globalplatform, ant-javacard, gppro, gptools, etc.
+        maven { url "https://javacard.pro/maven" }
+        maven { url "https://deadcode.me/mvn" }
+    }
+    dependencies {
+        classpath 'com.klinec:gradle-javacard:1.8.0'
+    }
+}
+
+apply plugin: 'com.klinec.gradle.javacard'
+
+repositories {
+    mavenCentral()
+    // mavenLocal() // for local maven repository if needed
+
+    // Repository with Globalplatform, ant-javacard, gppro, gptools, etc.
+    maven { url  "https://dl.bintray.com/ph4r05/jcard" }
+    maven { url "https://javacard.pro/maven" }
+    maven { url "https://deadcode.me/mvn" }
+}
+
+javacard {
+    config {
+        jckit 'C:\\javacard'
+        cap {
+            packageName 'be.mgx.javacard'
+            version '0.1'
+            aid '01:02:03:04:05:06:07:08:09'
+            output 'applet.cap'
+            applet {
+                className 'be.mgx.javacard.HelloWorld'
+                aid '01:02:03:04:05:06:07:08:09:01:02'
+            }
+        }
+    }
+
+    scripts {
+        script {
+            name 'select'
+            apdu '00:A4:04:00:0A:01:02:03:04:05:06:07:08:09:01:00'
+        }
+        script {
+            name 'hello'
+            apdu '00:40:00:00:00'
+        }
+        task {
+            name 'sendHello'
+            scripts 'select', 'hello'
+        }
+    }
+}
